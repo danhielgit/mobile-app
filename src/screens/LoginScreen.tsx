@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   View,
   Text,
@@ -9,7 +10,12 @@ import {
   StatusBar,
 } from 'react-native';
 
+import { useRouter } from 'expo-router';
+
 const LoginScreen = () => {
+
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -23,7 +29,10 @@ const LoginScreen = () => {
 
       {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.bankName}>NovaBank</Text>
+        <Text style={styles.bankName}>
+          NovaBank
+        </Text>
+
         <Text style={styles.subtitle}>
           Secure Mobile Banking
         </Text>
@@ -32,10 +41,14 @@ const LoginScreen = () => {
       {/* CARD */}
       <View style={styles.card}>
 
-        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={styles.title}>
+          Welcome Back
+        </Text>
 
         {/* EMAIL */}
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label}>
+          Email
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -48,7 +61,9 @@ const LoginScreen = () => {
         />
 
         {/* PASSWORD */}
-        <Text style={styles.label}>Password</Text>
+        <Text style={styles.label}>
+          Password
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -69,8 +84,13 @@ const LoginScreen = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* REGISTER */}
-        <TouchableOpacity>
+        {/* GO TO REGISTER */}
+        <TouchableOpacity
+          onPress={() => {
+            console.log("Ir a register");
+            router.replace("/register");
+          }}
+        >
           <Text style={styles.registerText}>
             I don't have an account
           </Text>
@@ -100,7 +120,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 38,
     fontWeight: 'bold',
-    letterSpacing: 1,
   },
 
   subtitle: {
@@ -149,13 +168,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
     marginTop: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
     elevation: 5,
   },
 
@@ -174,3 +186,4 @@ const styles = StyleSheet.create({
   },
 
 });
+``
