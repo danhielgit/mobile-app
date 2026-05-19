@@ -10,7 +10,9 @@ import {
   StatusBar,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
 
@@ -18,9 +20,29 @@ const LoginScreen = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    console.log('Login pressed');
+  const handleLogin = async () => {
+
+    if (!email || !password) {
+      alert("Complete all fields");
+      return;
+    }
+
+    const storedUser = await AsyncStorage.getItem("user");
+
+    if (!storedUser) {
+      alert("No account found");
+      return;
+    }
+
+    const user = JSON.parse(storedUser);
+
+    if (email === user.email && password === user.password) {
+      router.replace("/home" as any);
+    } else {
+      alert("Invalid credentials");
+    }
   };
 
   return (
@@ -65,14 +87,31 @@ const LoginScreen = () => {
           Password
         </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your password"
-          placeholderTextColor="#94A3B8"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={{ position: "relative" }}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            placeholderTextColor="#94A3B8"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={{
+              position: "absolute",
+              right: 15,
+              top: 14,
+            }}
+          >
+            <Ionicons
+              name={showPassword ? "eye-off" : "eye"}
+              size={26}
+              color="#94A3B8"
+            />
+          </TouchableOpacity>
+        </View>
 
         {/* LOGIN BUTTON */}
         <TouchableOpacity
@@ -86,10 +125,7 @@ const LoginScreen = () => {
 
         {/* GO TO REGISTER */}
         <TouchableOpacity
-          onPress={() => {
-            console.log("Ir a register");
-            router.replace("/register");
-          }}
+          onPress={() => router.replace("/register")}
         >
           <Text style={styles.registerText}>
             I don't have an account
@@ -186,4 +222,3 @@ const styles = StyleSheet.create({
   },
 
 });
-``

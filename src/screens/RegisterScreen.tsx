@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 const RegisterScreen = () => {
 
@@ -24,24 +26,37 @@ const RegisterScreen = () => {
   const [country, setCountry] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleRegister = () => {
-    console.log("Register:", {
-      firstname,
-      lastname,
-      phone,
-      address,
-      country,
-      email,
-      password
-    });
+  const handleRegister = async () => {
+
+    if (!firstname || !lastname || !email || !password) {
+      alert("Please complete all required fields");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      alert("Invalid email");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+
+    const userData = { email, password };
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
+
+    alert("Account created successfully ✅");
+    router.replace("/login");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled">
 
         <View style={styles.header}>
           <Text style={styles.bankName}>NovaBank</Text>
@@ -54,28 +69,56 @@ const RegisterScreen = () => {
 
           {/* FIRSTNAME */}
           <Text style={styles.label}>First Name</Text>
-          <TextInput style={styles.input} value={firstname} onChangeText={setFirstname} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your first name"
+            value={firstname}
+            onChangeText={setFirstname}
+          />
 
           {/* LASTNAME */}
           <Text style={styles.label}>Last Name</Text>
-          <TextInput style={styles.input} value={lastname} onChangeText={setLastname} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your last name"
+            value={lastname}
+            onChangeText={setLastname}
+          />
 
           {/* PHONE */}
           <Text style={styles.label}>Mobile Phone</Text>
-          <TextInput style={styles.input} keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your phone"
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+          />
 
           {/* ADDRESS */}
           <Text style={styles.label}>Address</Text>
-          <TextInput style={styles.input} value={address} onChangeText={setAddress} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your address"
+            value={address}
+            onChangeText={setAddress}
+          />
 
           {/* COUNTRY */}
           <Text style={styles.label}>Country</Text>
-          <TextInput style={styles.input} value={country} onChangeText={setCountry} />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your country"
+            value={country}
+            onChangeText={setCountry}
+          />
 
           {/* EMAIL */}
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
+            placeholder="Enter your email"
+            placeholderTextColor="#94A3B8"
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -84,12 +127,32 @@ const RegisterScreen = () => {
 
           {/* PASSWORD */}
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+
+          <View style={{ position: "relative" }}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              placeholderTextColor="#94A3B8"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute",
+                right: 15,
+                top: 10,
+              }}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={26}
+                color="#94A3B8"
+              />
+            </TouchableOpacity>
+          </View>
 
           {/* BUTTON */}
           <TouchableOpacity
@@ -102,9 +165,7 @@ const RegisterScreen = () => {
           </TouchableOpacity>
 
           {/* VOLVER A LOGIN */}
-          <TouchableOpacity
-            onPress={() => router.replace("/")}
-          >
+          <TouchableOpacity onPress={() => router.replace("/")}>
             <Text style={styles.registerText}>
               I already have an account
             </Text>
